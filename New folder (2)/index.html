@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday</title>
+    <style>
+        body {
+            font-family: 'Arial, sans-serif';
+            background: linear-gradient(to bottom, #a6c8ff, #ffffff); /* Wintery blue to white gradient */
+            text-align: center;
+            color: black; /* Changed text color to black */
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .section {
+            margin: 20px auto;
+            max-width: 80%;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+        }
+
+        h1, h2 {
+            font-size: 2.5rem;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        p {
+            font-size: 1.2rem;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.5rem;
+            color: white;
+            background-color: #ff6f61;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #ff3b3b;
+        }
+
+        /* Slideshow styles */
+        .slideshow-container {
+            position: relative;
+            max-width: 80%;
+            margin: 20px auto;
+            padding-bottom: 40px; /* Ensure there's space for the button */
+        }
+
+        .slide {
+            display: none;
+            position: absolute;
+            width: 100%;
+        }
+
+        .slide img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* Snowflakes Animation */
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: white;
+            font-size: 1.5rem;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: fall 5s linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Positioning the next button at the bottom right corner */
+        .next-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Music -->
+    <audio id="bg-music" loop>
+        <source src="blue.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music Control Button -->
+    <button onclick="toggleMusic()">Play Music</button>
+
+    <!-- Section 1 -->
+    <div id="section-1" class="section">
+        <h1>Happy Birthday, AMISHA!</h1>
+        <p>Click the button below to begin your birthday surprises!</p>
+        <button onclick="showNextSection(2)">Start</button>
+    </div>
+
+    <!-- Section 2 -->
+    <div id="section-2" class="section hidden">
+        <h2>🎉 Surprise 1: A Special Message 🎉</h2>
+        <p>This is your heartfelt message. You are amazing!</p>
+        <button class="next-btn" onclick="showNextSection(3)">Next</button>
+    </div>
+
+    <!-- Section 3 with Slideshow -->
+    <div id="section-3" class="section hidden">
+        <h2>📸 Surprise 2: A Memory Slideshow 📸</h2>
+        <p>Here are some cherished memories!</p>
+        <div class="slideshow-container">
+            <div class="slide active">
+                <img src="im1.jpg" alt="Memory 1" style="width: 300px; height: 200px;">
+            </div>
+            <div class="slide">
+                <img src="im2.jpg" alt="Memory 2" style="width: 300px; height: 200px;">
+            </div>
+            <div class="slide">
+                <img src="im3.jpg" alt="Memory 3" style="width: 300px; height: 200px;">
+            </div>
+        </div>
+        <button class="next-btn" onclick="showNextSection(4)">Next</button>
+    </div>
+
+    <!-- Section 4 -->
+    <div id="section-4" class="section hidden">
+        <h2>🎁 Surprise 3: Your Virtual Gift 🎁</h2>
+        <p>This is your virtual gift! Hope you love it!</p>
+        <button class="next-btn" onclick="restart()">Restart</button>
+    </div>
+
+    <!-- Snowflakes Script -->
+    <script>
+        // Snowflake generator
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.textContent = '❄️'; // Snowflake symbol
+            snowflake.style.left = `${Math.random() * 100}vw`;
+            snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`; // Random speed
+            snowflake.style.animationDelay = `${Math.random() * 5}s`; // Random delay
+            document.body.appendChild(snowflake);
+
+            // Remove snowflake after animation ends
+            snowflake.addEventListener('animationend', () => {
+                snowflake.remove();
+            });
+        }
+
+        // Create snowflakes every 200ms
+        setInterval(createSnowflake, 200);
+
+        let currentSection = 1;
+        const music = document.getElementById('bg-music');
+        let isMusicPlaying = false;
+
+        // Start music if it was playing before
+        if (localStorage.getItem('isMusicPlaying') === 'true') {
+            music.play();
+            isMusicPlaying = true;
+        }
+
+        function showNextSection(sectionNumber) {
+            document.getElementById(`section-${currentSection}`).classList.add('hidden');
+            document.getElementById(`section-${sectionNumber}`).classList.remove('hidden');
+            currentSection = sectionNumber;
+        }
+
+        function restart() {
+            document.getElementById(`section-${currentSection}`).classList.add('hidden');
+            document.getElementById('section-1').classList.remove('hidden');
+            currentSection = 1;
+        }
+
+        // Music controls
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                music.pause();
+                isMusicPlaying = false;
+                document.querySelector('button').textContent = "Play Music"; // Change button text
+            } else {
+                music.play();
+                isMusicPlaying = true;
+                document.querySelector('button').textContent = "Pause Music"; // Change button text
+            }
+            localStorage.setItem('isMusicPlaying', isMusicPlaying);
+        }
+
+        // Slideshow logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+        }
+
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 3000); // Change slide every 3 seconds
+    </script>
+</body>
+</html>
